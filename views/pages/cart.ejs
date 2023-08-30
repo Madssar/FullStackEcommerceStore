@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cart</title>
+
+    <!-- bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+      crossorigin="anonymous"
+    />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="./css/index.css" />
+    <link rel="stylesheet" href="./css/nav.css" />
+    <link rel="icon" href="./images/logo/favicon.svg" />
+</head>
+
+<body>
+  <!-- Navbar -->
+  <header id="header">
+    <nav class="navbar navbar-expand-lg bg-light fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="#">
+          <img
+            src="./images/logo/logo.svg"
+            class="img-fluid"
+            width="100%"
+            alt="logo"
+          />
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="ti-align-justify navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/#products">Products</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/#blog">Blog</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/#contact">Contact Us</a>
+            </li>
+            <% if(message=='Not'){%>
+            <li class="nav-item">
+              <a class="nav-link" href="/login">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/register">Register</a>
+            </li>
+            <%}else{%>
+              <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+              </li>
+              <%}%>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  
+  <section id="cart-section" class="h-100 gradient-custom">
+    <div class="container py-5">
+      <div class="row d-flex justify-content-center my-4">
+        <div class="col-md-8">
+          <div class="card mb-4 card-container">
+            <div class="card-header py-3">
+              <h5 class="mb-0">Cart</h5>
+            </div>
+
+            <% /* looping through the all items in the cart */ %>
+            <%
+            if (cart && cart.length > 0)
+            {
+              cart.forEach(function(item){
+            %>
+            <div class="card-body" data-product-id="<%= item.id %>">
+              
+              <div class="row">
+                <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
+                  
+                  <% /* getting image from database */ %>
+                  <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+                    <img src="images/products/<%= item.image %>"
+                      class="w-100" alt="cart image" />
+                    <a href="#!">
+                      <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+                    </a>
+                  </div>
+                </div>
+  
+
+                <% /* showing name of product */ %>
+                <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+                  
+                  <p><strong><%= item.name %></strong></p>
+
+
+                  <% /* to remove product from cart */ %>
+                  <form class="delform" action="/remove_item" method="post">
+                    <input type="hidden" name="id" value="<%= item.id %>"/>
+                    <button type="submit" class="btn btn-primary btn-sm me-1 mb-2 px-3 py-2" data-mdb-toggle="tooltip">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </form>
+                </div>
+  
+
+
+                <% /* increment/decrement quantity buttons */ %>
+                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                  
+                  <div class="d-flex mb-4" style="max-width: 300px">
+                    <form action="/edit_product_quantity" method="post" class="d-flex manage-quantity">
+                      
+                      <input type="hidden" value="<%= item.id %>" name="id"/>
+                      
+                      <input type="submit" value="-" name="decreaseBtn" id="decreaseValue" class="btn btn-primary px-3 py-2 h-100"/>
+    
+                      <div class="form-outline mx-1">
+                        <input type="text" min="1" name="quantity" value="<%= item.quantity %>" data-product-id="<%= item.id %>" class="form-control quantity-box" readonly/>
+                      </div>
+                      
+                      <input type="submit" value="+" name="increaseBtn" id="increaseValue" class="btn btn-primary px-3 py-2 h-100"/>
+                      
+                    </form>
+                  </div>
+                
+
+
+                  <% /* if sale price then show the product sale price else show normal price */ %>
+                  <p class="text-start text-md-center">
+                    <% totalProductPrice = 0;
+                    if (item.sale_price){%>
+                    <%totalProductPrice += item.sale_price * item.quantity;%>
+                    <%}
+                    else{%>
+                      <%totalProductPrice += item.price * item.quantity;%>
+                    <% } %>
+                    <strong class="total-product-price" data-product-id="<%= item.id %>">$<%= totalProductPrice %></strong>
+                  </p>
+                  
+                </div>
+              </div>
+              
+            </div>
+            <% })} else {%>
+              <div class="d-flex justify-content-center my-4">Cart is Empty</div>
+            <% } %>
+            
+          </div>
+        </div>
+        <%if(cart && cart.length>0){%>
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <div class="card-header py-3">
+              <h5 class="mb-0">Summary</h5>
+            </div>
+
+            <div class="card-body">
+              
+              <% /* if sale price show the sale price else show normal price */ %>
+              <% cart.forEach(function(item) {%>
+                <% totalProductPrice = 0;
+                    if (item.sale_price){%>
+                    <%totalProductPrice += item.sale_price * item.quantity;%>
+                    <%}
+                    else{%>
+                      <%totalProductPrice += item.price * item.quantity;%>
+                    <% } %>
+                <div class="d-flex justify-content-between px-0 mb-3 rs-items" data-product-id="<%= item.id %>">
+                  <%= item.name %>
+                  <strong>$<%= totalProductPrice %></strong>
+                  </div>
+                <% }) %>
+
+
+                 <% /* showing total bill */ %>
+                <div class="d-flex justify-content-between px-0 mb-3">
+                  <span><strong>Total amount</strong></span>
+                  <span><strong class="total-amount">$ <%= total %></strong></span>
+                </div>
+        
+                <button onclick="checkout()" id="checkoutButton" class="btn btn-primary btn-lg btn-block">
+                  Place Order
+                </button>
+            
+            </div>
+          </div>
+        </div>
+        <%}%>
+            
+      </div>
+    </div>
+  </section>
+
+
+
+  <% /* bootstrap */ %>
+  <script
+   src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+   integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+   crossorigin="anonymous"
+  ></script>
+
+    <% /* Fontawesome */ %>
+    <script
+      src="https://kit.fontawesome.com/819f6c7b76.js"
+      crossorigin="anonymous"
+    ></script>
+
+ <% /* Sweet Alert */ %>
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+ <script src="./js/delete-product.js"></script>
+ <script src="./js/manage-quantity.js"></script>
+<script src="./js/place-order.js"></script>
+ 
+</body>
+</html>

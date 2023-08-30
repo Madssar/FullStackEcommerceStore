@@ -1,0 +1,21 @@
+/* NAV CSS */
+#header .fixed-top{
+    box-shadow:  0 0.12rem 0.675rem rgb(0 0 0 / 5%);
+}
+.navbar-brand{
+    width: 150px;
+}
+#header .navbar-nav .nav-item .nav-link{
+    color: var(--text-black);
+    padding: 0.5rem 1rem;
+    text-align: center;
+}
+
+#header .navbar-nav .nav-item .nav-link:hover,
+#header .navbar-nav .nav-item .nav-link:active{
+    color: var(--bg-blue);
+}
+
+#header .navbar-toggler:focus{
+box-shadow: none;
+}
